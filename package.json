@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "heroku": "node -r esm ./src/index.js",
     "start": "nodemon -r esm ./src/index.js"
   },
   "repository": "https://github.com/Zalart/pointing-poker-socket-server",
