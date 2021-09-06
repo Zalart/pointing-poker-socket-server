@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "heroku": "node -r esm ./src/index.js",
+    "start": "nodemon -r esm ./src/index.js"
+  },
+  "repository": "https://github.com/Zalart/pointing-poker-socket-server",
+  "author": "artur <me@zalart.com>",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "socket.io": "^4.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12",
+    "esm": "^3.2.25"
+  }
+}
