@@ -7,14 +7,16 @@ import {
     USER_CONNECTED,
     USER_DISCONNECTED,
   } from '../utils/constants';
+  import usersStore from './users';
 
-  export const addUserEvents = (io) => {
+  export const userEvents = (io) => {
     io.on(CONNECTION, (socket) => {
         let userId;
         let roomToBroadcast;
     
         try {
-          socket.on(JOIN_ROOM, ({ room, id }) => {
+          socket.on(JOIN_ROOM, ({ room, id, firstName }) => {
+            //здесь будет логика добавления пользователя в комнату
             userId = id;
             socket.join(room);
             roomToBroadcast = room;
