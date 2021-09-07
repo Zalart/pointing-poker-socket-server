@@ -1,13 +1,10 @@
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
-import dotenv from 'dotenv';
 
 import {Server} from 'socket.io';
 
-import {addUserEvents} from '../src/events/user';
-
-dotenv.config();
+import {userEvents} from '../src/users/userEvents';
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -16,7 +13,8 @@ const io = new Server(server);
 
 app.use(cors());
 
-addUserEvents(io);
+userEvents(io);
+
 
 app.get('/', (req, res) => {
     res.send('Server is running');
