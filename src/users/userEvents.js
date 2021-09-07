@@ -7,22 +7,24 @@ import {
     USER_CONNECTED,
     USER_DISCONNECTED,
   } from '../utils/constants';
-  import {store} from './users';
+  import store from './users';
 
-  export const userEvents = (io) => {
+  export const userEvents =  (io) => {
     io.on(CONNECTION, (socket) => {
         let userId;
         let roomToBroadcast;
     
         try {
-          socket.on(JOIN_ROOM, ({ room, id, firstName, lastName }) => {
+          socket.on(JOIN_ROOM,  ({ room, id, firstName, lastName }) => {
             //здесь будет логика добавления пользователя в комнату
+            store.addUser({id, firstName, lastName, room});
             userId = id;
             socket.join(room);
             roomToBroadcast = room;
-            store.addUser({id, firstName, lastName, room});
+            
+            
             socket.to(roomToBroadcast).emit(USER_CONNECTED, userId);
-            console.log('here_server')
+            io.to(roomToBroadcast).emit('SHOW_USERS', store.getUsers(roomToBroadcast));
           })
     
           socket.on(SEND_MESSAGE, (message) => {
@@ -32,13 +34,12 @@ import {
           socket.on(DISCONNECT, () => {
             socket.to(roomToBroadcast).emit(USER_DISCONNECTED, userId);
           })
+
+
         } catch (error) {
           console.log(error)
         }
 
       })
-
-      console.log(store.users)
-
   }
   

@@ -27,4 +27,4 @@ class ManageUsers {
     getUsers = (room) => this.users.filter(user => user.room === room)
 }
 
-export let store =  new ManageUsers();
+export default new ManageUsers();
