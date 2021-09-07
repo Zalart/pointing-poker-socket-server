@@ -10,6 +10,7 @@ class ManageUsers {
         if (!firstName || !lastName || !room) return { error: "Username and room are required" };
         const user = {id, firstName, lastName, room}
         this.users.push(user);
+        return { user }
     }
 
     removeUser = (id) => {
@@ -26,4 +27,4 @@ class ManageUsers {
     getUsers = (room) => this.users.filter(user => user.room === room)
 }
 
-export default usersStore = new ManageUsers();
+export let store =  new ManageUsers();

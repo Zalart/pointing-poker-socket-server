@@ -6,7 +6,7 @@ import {Server} from 'socket.io';
 
 import {userEvents} from '../src/users/userEvents';
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -14,6 +14,7 @@ const io = new Server(server);
 app.use(cors());
 
 userEvents(io);
+
 
 app.get('/', (req, res) => {
     res.send('Server is running');
