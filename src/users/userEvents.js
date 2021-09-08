@@ -20,12 +20,21 @@ import {
             store.addUser({id, firstName, lastName, room});
             userId = id;
             socket.join(room);
-            roomToBroadcast = room;
-            
-            
+            roomToBroadcast = room;  
             socket.to(roomToBroadcast).emit(USER_CONNECTED, userId);
             io.to(roomToBroadcast).emit('SHOW_USERS', store.getUsers(roomToBroadcast));
           })
+
+          socket.on('LEAVE_ROOM',  (id) => {
+            //здесь будет логика удаления пользователя из комнаты
+            const leavingUser = store.removeUser(id);
+            userId = leavingUser.id;
+            roomToBroadcast = leavingUser.room;  
+            socket.leave(leavingUser.room);
+            socket.to(roomToBroadcast).emit(USER_DISCONNECTED, userId);
+            io.to(roomToBroadcast).emit('SHOW_USERS', store.getUsers(roomToBroadcast));
+          })
+
     
           socket.on(SEND_MESSAGE, (message) => {
             io.to(roomToBroadcast).emit(RECEIVE_MESSAGE, { message, from: userId });
