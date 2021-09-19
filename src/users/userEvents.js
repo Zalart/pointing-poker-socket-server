@@ -3,6 +3,18 @@ import rooms from '../rooms/rooms';
 export const userEvents =  (io) => {
   io.on('connection', (socket) => {
     try {
+      socket.on('disconnecting', () => {
+        const id = socket.id;
+        socket.rooms.delete(id);
+        const room = socket.rooms.values().next().value;
+        if (room) {
+          rooms.get(room).users.find(function(user) { if (user.id === id) { user.status = 'disconect'; return true }})  // переключение статуса пользователя 
+          if ( !rooms.get(room).users.find(user => user.status === 'connect') ) { // удаление комнаты если нет подключенных пользователей
+            rooms.delete(room);
+        }
+        }
+      })
+
       socket.on('create_session', (data) => {  //создание новой игры
       const {sessionName, user} = data;
       if (rooms.has(sessionName)) { console.log(`ROOM ${sessionName} IS ALREADY CREATED!!!`) }  //проверка имени комнаты
@@ -13,6 +25,7 @@ export const userEvents =  (io) => {
         roomInfo.users.push(user);
         rooms.set(sessionName, roomInfo);
         socket.join(sessionName);
+        socket.emit('room_created');
       } else { console.log('YOU ARE IN THE ROOM! LEAVE IT AND TRY AGAIN!') }
     })
 
@@ -28,7 +41,7 @@ export const userEvents =  (io) => {
           roomInfo.users.push(user);
           rooms.set(sessionName, roomInfo);
           socket.join(sessionName);
-          console.log(rooms.get(sessionName).users)
+          socket.emit('room_joined');
         }
         }
       })
