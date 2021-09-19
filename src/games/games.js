@@ -50,7 +50,6 @@ class ManageGames {
         }
         // Add new user if no userData found in users array
         this.games[gameId].users.push(userToAdd);
-
     }
 
     getUsers = gameId => this.games[gameId].users;
