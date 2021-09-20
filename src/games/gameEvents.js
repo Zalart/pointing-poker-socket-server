@@ -23,7 +23,7 @@ import {
     
         try {
             // connect to lobby
-          socket.on(CONNECT_LOBBY, ({ gameId, firstName, lastName, isObserver, isMaster, position }) => {
+          socket.on(CONNECT_LOBBY, ({ gameId, firstName, lastName, isObserver, isMaster, position, ava }) => {
             // game master creates new game
             if (isMaster) {
             store.newGame(gameId);
@@ -35,7 +35,7 @@ import {
             } else {
             // add user to game
             socket.join(gameId);
-            store.addUser(gameId, {userId, firstName, lastName, position, isObserver, isMaster});
+            store.addUser(gameId, {userId, firstName, lastName, position, isObserver, isMaster, ava});
             gameToBroadcast = gameId;  
            // emit game data
             io.to(gameToBroadcast).emit(LOBBY_CONNECTED, store.getGameData(gameToBroadcast), gameToBroadcast );
