@@ -13,6 +13,7 @@ import {
     RECEIVE_MESSAGE,
     USER_CONNECTED,
     USER_DISCONNECTED,
+    KICK_PLAYER,
   } from '../utils/constants';
   import store from './games';
 
@@ -60,14 +61,15 @@ import {
             io.emit(GAMES_LIST, gamesList);
           })
           
-          socket.on(LEAVE_GAME,  (userId) => {
+          socket.on(LEAVE_GAME,  ({ gameId, userId }) => {
             //здесь будет логика удаления пользователя из комнаты
-            const leavingUser = store.removeUser(id);
-            userId = leavingUser.id;
-            gameToBroadcast = leavingUser.game;  
-            socket.leave(leavingUser.game);
-            socket.to(gameToBroadcast).emit(USER_DISCONNECTED, userId);
-            io.to(gameToBroadcast).emit('SHOW_USERS', store.getUsers(gameToBroadcast));
+            store.removeUser(gameId, userId);
+            gameToBroadcast = gameId;
+            const gameData = store.getGameData(gameId);
+            io.to(gameToBroadcast).emit(GAME_DATA, gameData);
+            socket.leave(gameId);
+            //socket.to(gameToBroadcast).emit(USER_DISCONNECTED, userId);
+            //io.to(gameToBroadcast).emit('SHOW_USERS', store.getUsers(gameToBroadcast));
           })
 
     
@@ -78,7 +80,10 @@ import {
           socket.on(DISCONNECT, () => {
             socket.to(gameToBroadcast).emit(USER_DISCONNECTED, userId);
           })
+          socket.on(KICK_PLAYER, (data) => {
 
+            if (socket.id = id) {  } 
+          })
 
         } catch (error) {
           console.log(error)

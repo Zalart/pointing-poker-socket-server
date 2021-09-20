@@ -58,11 +58,11 @@ class ManageGames {
 
     getGames = () => Object.keys(this.games);
 
-    removeUser = (id) => {
-        const index = this.users.findIndex((user) => user.id === id);
+    removeUser = (gameId, id) => {
+        const index = this.games[gameId].users.findIndex((user) => user.userId === id);
         if (index !== -1) 
         {
-            return this.users.splice(index, 1)[0];
+            return this.games[gameId].users.splice(index, 1)[0];
         } else {
             return 'user not found';
         }
