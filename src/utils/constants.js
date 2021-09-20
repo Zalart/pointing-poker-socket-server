@@ -21,3 +21,4 @@ export const DISCONNECT = 'disconnect';
  export const RECEIVE_MESSAGE = 'receive_message';
  export const USER_CONNECTED = 'user_connected';
  export const USER_DISCONNECTED = 'user_disconnected';
+ export const KICK_PLAYER = 'kick_player';
