@@ -14,8 +14,11 @@ import {
     USER_CONNECTED,
     USER_DISCONNECTED,
     KICK_PLAYER,
+    BLOCK_APP,
   } from '../utils/constants';
   import store from './games';
+  import { votes, Vote } from '../utils/vote';
+  import { messToKick, firstMessToKick, drawToKick } from '../utils/vote';
 
   export const gameEvents =  (io) => {
     io.on(CONNECTION, (socket) => {
@@ -81,9 +84,50 @@ import {
             socket.to(gameToBroadcast).emit(USER_DISCONNECTED, userId);
           })
           socket.on(KICK_PLAYER, (data) => {
-
-            if (socket.id = id) {  } 
+            const {room, id, userToKickId} = data;
+            if ((data.vote !== undefined) && votes.has(room)) { 
+              const {vote} = data;
+              const answer = votes.get(room).addVote({ vote, id });
+              if (!answer) { return } 
+              else {
+                if (answer.kick === 'undefined') { io.to(id).emit(BLOCK_APP, { isBlock: true, message: answer.message }); return; }
+                if (answer.kick === false) {
+                  const userToKickId = votes.get(room).userToKickId; 
+                  votes.delete(room);
+                  socket.id = userToKickId;
+                  socket.leave(room);
+                  io.to(room).emit(BLOCK_APP, { isBlock: true, message: answer.message });
+                  io.to(userToKickId).emit(BLOCK_APP, { isBlock: true, message: drawToKick });
+                  socket.join(room);
+                  return;
+                }
+                if (answer.kick === true) {
+                  const userToKickId = votes.get(room).userToKickId; 
+                  store.removeUser(room, userToKickId);
+                  votes.delete(room);
+                  const gameData = store.getGameData(room);
+                  io.to(room).emit(GAME_DATA, gameData);
+                  socket.id = userToKickId;
+                  socket.leave(room);
+                  io.to(room).emit(BLOCK_APP, { isBlock: true, message: answer.message });
+                  io.to(userToKickId).emit(BLOCK_APP, { isBlock: true, message: messToKick });
+                  return 
+                }
+              }
+            }
+            if (!votes.has(room)) {
+              const user = store.getUsers(room).find((user) => user.userId === userToKickId);
+              const userName = user.firstName;
+              const usersNum = store.getUsers(room).length;
+              votes.set(room, new Vote({ userName, usersNum, userToKickId }));
+              socket.id = userToKickId;
+              socket.leave(room);
+              io.to(room).emit(BLOCK_APP, { isBlock: true, message: votes.get(room).sendMessage() });
+              io.to(userToKickId).emit(BLOCK_APP, { isBlock: true, message: firstMessToKick });
+              socket.join(room);
+            }
           })
+          
 
         } catch (error) {
           console.log(error)
