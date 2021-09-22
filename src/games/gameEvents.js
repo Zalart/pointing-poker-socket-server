@@ -14,8 +14,10 @@ import {
     USER_CONNECTED,
     USER_DISCONNECTED,
     KICK_PLAYER,
+    BLOCK_APP,
   } from '../utils/constants';
   import store from './games';
+  import { votes, Vote } from '../utils/vote'
 
   export const gameEvents =  (io) => {
     io.on(CONNECTION, (socket) => {
@@ -81,9 +83,20 @@ import {
             socket.to(gameToBroadcast).emit(USER_DISCONNECTED, userId);
           })
           socket.on(KICK_PLAYER, (data) => {
-
-            if (socket.id = id) {  } 
+            const {room, id} = data;
+            if (!votes.has(room)) {
+              const user = store.getUsers(room).find((user) => user.userId === id);
+              console.log('USERUSER', user)
+              const userName = user.firstName;
+              const usersNum = store.getUsers(room).length;
+              votes.set(room, new Vote({ userName, usersNum }));
+              console.log(votes.get(room).sendMessage())
+              io.to(room).emit(BLOCK_APP, { isBlock: true, message: votes.get(room).sendMessage() });
+            }
+            //io.to(room).emit(BLOCK_APP, { isBlock:true });
+             
           })
+          
 
         } catch (error) {
           console.log(error)
