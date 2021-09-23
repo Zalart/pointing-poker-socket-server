@@ -15,6 +15,7 @@ import {
     USER_DISCONNECTED,
     KICK_PLAYER,
     BLOCK_APP,
+    SET_GAME_DATA,
   } from '../utils/constants';
   import store from './games';
   import { votes, Vote } from '../utils/vote';
@@ -126,6 +127,12 @@ import {
               io.to(userToKickId).emit(BLOCK_APP, { isBlock: true, message: firstMessToKick });
               socket.join(room);
             }
+          })
+
+          socket.on(SET_GAME_DATA, ({ gameId, data }) => {
+            store.setGameData({ gameId, data });
+            const gameData = store.getGameData(gameId);
+            io.to(gameId).emit(GAME_DATA, gameData);
           })
           
 

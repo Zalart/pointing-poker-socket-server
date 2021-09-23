@@ -23,5 +23,6 @@ export const DISCONNECT = 'disconnect';
  export const USER_DISCONNECTED = 'user_disconnected';
  export const KICK_PLAYER = 'kick_player';
  export const BLOCK_APP = 'block_app';
+ export const SET_GAME_DATA = 'set_game_data';
 
  
