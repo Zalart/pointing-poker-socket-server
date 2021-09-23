@@ -56,6 +56,12 @@ class ManageGames {
 
     getGameData = gameId => this.games[gameId];
 
+    setGameData = ({ gameId, data }) => {
+        const { cards, issues } = data;
+        this.games[gameId].issues = issues;
+        this.games[gameId].cards = cards;
+    }
+
     getGames = () => Object.keys(this.games);
 
     removeUser = (gameId, id) => {
