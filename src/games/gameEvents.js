@@ -131,8 +131,8 @@ import {
 
           socket.on(SET_GAME_DATA, ({ gameId, data }) => {
             store.setGameData({ gameId, data });
-            const gameData = store.getGameData(gameId);
-            io.to(gameId).emit(GAME_DATA, gameData);
+/*             const gameData = store.getGameData(gameId);
+            io.to(gameId).emit(GAME_DATA, gameData); */
           })
           
 
