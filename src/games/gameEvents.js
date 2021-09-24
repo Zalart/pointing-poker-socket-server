@@ -18,6 +18,7 @@ import {
     SET_GAME_DATA,
     START_GAME,
     GAME_STARTED,
+    DISCONNECTING
   } from '../utils/constants';
   import store from './games';
   import { votes, Vote } from '../utils/vote';
@@ -31,23 +32,21 @@ import {
         try {
             // connect to lobby
           socket.on(CONNECT_LOBBY, ({ gameId, firstName, lastName, isObserver, isMaster, position, ava }) => {
-            // game master creates new game
             if (isMaster) {
             store.newGame(gameId);
             }
-            // user enters the non-existing game
             if (!store.games[gameId]) {
               const gamesList = store.getGames(gameId);
               io.to(socket.id).emit(GAMES_LIST, gamesList);
             } else {
-            // add user to game
             socket.join(gameId);
             store.addUser(gameId, {userId, firstName, lastName, position, isObserver, isMaster, ava});
             gameToBroadcast = gameId;  
-           // emit game data
             io.to(gameToBroadcast).emit(LOBBY_CONNECTED, store.getGameData(gameToBroadcast), gameToBroadcast );
             }
           })
+
+
 
           socket.on(GET_GAME_DATA, gameId => {
             const gameData = store.getGameData(gameId);
@@ -68,14 +67,12 @@ import {
           })
           
           socket.on(LEAVE_GAME,  ({ gameId, userId }) => {
-            //здесь будет логика удаления пользователя из комнаты
             store.removeUser(gameId, userId);
             gameToBroadcast = gameId;
             const gameData = store.getGameData(gameId);
             io.to(gameToBroadcast).emit(GAME_DATA, gameData);
             socket.leave(gameId);
-            //socket.to(gameToBroadcast).emit(USER_DISCONNECTED, userId);
-            //io.to(gameToBroadcast).emit('SHOW_USERS', store.getUsers(gameToBroadcast));
+            store.checkRoom(gameId);
           })
 
     
@@ -86,6 +83,16 @@ import {
           socket.on(DISCONNECT, () => {
             socket.to(gameToBroadcast).emit(USER_DISCONNECTED, userId);
           })
+
+          socket.on(DISCONNECTING, () => {
+            if (socket.rooms.size === 1) { return; }
+            socket.rooms.delete(socket.id);
+            const room = socket.rooms.values().next().value;
+            store.removeUser(room, socket.id);
+            socket.leave(room);
+            store.checkRoom(room);
+          })
+
           socket.on(KICK_PLAYER, (data) => {
             const {room, id, userToKickId} = data;
             if ((data.vote !== undefined) && votes.has(room)) { 
@@ -140,13 +147,6 @@ import {
           socket.on(START_GAME, ({ room }) => {
             io.to(room).emit(GAME_STARTED);
           })
-
-          socket.on(USER_CONNECTED, () => {
-            store.setGameData({ gameId, data });
-            const gameData = store.getGameData(gameId);
-            io.to(gameId).emit(GAME_DATA, gameData);
-          })
-          
 
         } catch (error) {
           console.log(error)
