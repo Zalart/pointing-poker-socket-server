@@ -8,7 +8,6 @@ export const DISCONNECT = 'disconnect';
  * Custom socket.io events
  */
 
- 
  export const CONNECT_LOBBY = 'connect_lobby';
  export const GET_GAME_DATA = "get_game_data";
  export const GAME_DATA = "game_data";
@@ -27,4 +26,4 @@ export const DISCONNECT = 'disconnect';
  export const START_GAME = 'start_game';
  export const GAME_STARTED = 'game_started';
 
- 
+
