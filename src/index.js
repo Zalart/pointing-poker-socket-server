@@ -2,9 +2,9 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 
-import {Server} from 'socket.io';
+import { Server } from 'socket.io';
 
-import {gameEvents} from './games/gameEvents';
+import { gameEvents } from './games/gameEvents';
 
 const PORT = process.env.PORT || 5000;
 const app = express();
