@@ -60,7 +60,9 @@ class ManageGames {
         const { cards, issues, gameSettings } = data;
         this.games[gameId].issues = issues;
         this.games[gameId].cards = cards;
-        this.games[gameId].gameSettings = cards;
+        this.games[gameId].gameSettings = gameSettings;
+
+        console.log('Current game status', this.games[gameId])
 
     }
 
