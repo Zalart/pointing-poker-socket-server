@@ -24,5 +24,7 @@ export const DISCONNECT = 'disconnect';
  export const KICK_PLAYER = 'kick_player';
  export const BLOCK_APP = 'block_app';
  export const SET_GAME_DATA = 'set_game_data';
+ export const START_GAME = 'start_game';
+ export const GAME_STARTED = 'game_started';
 
  

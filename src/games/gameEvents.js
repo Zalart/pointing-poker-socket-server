@@ -16,6 +16,8 @@ import {
     KICK_PLAYER,
     BLOCK_APP,
     SET_GAME_DATA,
+    START_GAME,
+    GAME_STARTED,
   } from '../utils/constants';
   import store from './games';
   import { votes, Vote } from '../utils/vote';
@@ -130,6 +132,16 @@ import {
           })
 
           socket.on(SET_GAME_DATA, ({ gameId, data }) => {
+            store.setGameData({ gameId, data });
+            const gameData = store.getGameData(gameId);
+            io.to(gameId).emit(GAME_DATA, gameData);
+          })
+
+          socket.on(START_GAME, ({ room }) => {
+            io.to(room).emit(GAME_STARTED);
+          })
+
+          socket.on(USER_CONNECTED, () => {
             store.setGameData({ gameId, data });
             const gameData = store.getGameData(gameId);
             io.to(gameId).emit(GAME_DATA, gameData);
