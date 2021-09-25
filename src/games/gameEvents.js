@@ -138,10 +138,12 @@ import {
             }
           })
 
-          socket.on(SET_GAME_DATA, ({ gameId, data }) => {
-            store.setGameData({ gameId, data });
-            const gameData = store.getGameData(gameId);
-            io.to(gameId).emit(GAME_DATA, gameData);
+          socket.on(SET_GAME_DATA, ({ type, gameId, data }) => {
+            switch (type) { 
+              case 'get': const gameData1 = store.getGameData(gameId); io.to(gameId).emit(GAME_DATA, gameData1);  ; break;
+              case 'post': store.setGameData({ gameId, data }); const gameData2 = store.getGameData(gameId); io.to(gameId).emit(GAME_DATA, gameData2); break;
+              default: return;
+            }
           })
 
           socket.on(START_GAME, ({ room }) => {
