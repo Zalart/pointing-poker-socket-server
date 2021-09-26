@@ -28,7 +28,17 @@ class ManageGames {
             users: [],
             cards: [],
             issues: [],
-            gameSettings: {},
+            gameSettings: {
+                isPlayer: true,
+                changingCard: false,
+                autoEntrance: true,
+                changingDecision: false,
+                isTimer: false,
+                scoreType: "story points",
+                scoreTypeShort: 'SP',
+                minutes: "",
+                seconds: ""
+            },
             roundsData: []
         }
         this.games[gameId] = game;
@@ -60,7 +70,7 @@ class ManageGames {
         const { cards, issues, gameSettings } = data;
         this.games[gameId].issues = issues;
         this.games[gameId].cards = cards;
-        this.games[gameId].gameSettings = cards;
+        this.games[gameId].gameSettings = gameSettings;
 
     }
 
