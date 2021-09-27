@@ -67,6 +67,7 @@ import {
           })
           
           socket.on(LEAVE_GAME,  ({ gameId, userId }) => {
+            console.log('LEAVE GAME', gameId, userId);
             store.removeUser(gameId, userId);
             gameToBroadcast = gameId;
             const gameData = store.getGameData(gameId);

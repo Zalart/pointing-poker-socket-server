@@ -89,7 +89,6 @@ class ManageGames {
     checkRoom(room) {
        console.log(this.games) 
        if (!this.games[room].users.length) { delete this.games[room] }
-       console.log('ROOMS AFTER DELETING', Object.keys(this.games));
     }
 
 }
