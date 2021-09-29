@@ -51,7 +51,6 @@ import {
           socket.on(GET_GAME_DATA, gameId => {
             const gameData = store.getGameData(gameId);
             if (gameData) {
-              console.log('Game data on server', gameData)
               io.to(gameToBroadcast).emit(GAME_DATA, gameData);
               } else {
                 const gamesList = store.getGames();
@@ -67,7 +66,6 @@ import {
           })
           
           socket.on(LEAVE_GAME,  ({ gameId, userId }) => {
-            console.log('LEAVE GAME', gameId, userId);
             store.removeUser(gameId, userId);
             gameToBroadcast = gameId;
             const gameData = store.getGameData(gameId);
