@@ -28,7 +28,17 @@ class ManageGames {
             users: [],
             cards: [],
             issues: [],
-            gameSettings: {},
+            gameSettings: {
+                isPlayer: true,
+                changingCard: false,
+                autoEntrance: true,
+                changingDecision: false,
+                isTimer: false,
+                scoreType: "story points",
+                scoreTypeShort: 'SP',
+                minutes: "",
+                seconds: ""
+            },
             roundsData: []
         }
         this.games[gameId] = game;
@@ -62,8 +72,6 @@ class ManageGames {
         this.games[gameId].cards = cards;
         this.games[gameId].gameSettings = gameSettings;
 
-        console.log('Current game status', this.games[gameId])
-
     }
 
     getGames = () => Object.keys(this.games);
@@ -75,9 +83,11 @@ class ManageGames {
         } else {
             return 'user not found';
         }
-
     }
 
+    checkRoom(room) {
+       if (!this.games[room].users.length) { delete this.games[room] }
+    }
 
 }
 
