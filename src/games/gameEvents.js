@@ -20,12 +20,14 @@ import {
     GAME_STARTED,
     DISCONNECTING,
     PLAY_GAME_DATA,
-    GET_PLAY_GAME_DATA
+    GET_PLAY_GAME_DATA,
+    RESULTS_DATA,
   } from '../utils/constants';
   import store from './games';
   import { votes, Vote } from '../utils/vote';
   import { messToKick, firstMessToKick, drawToKick } from '../utils/vote';
   import { playGames, PlayGame } from '../utils/playGame';
+  import { endPlayMessage } from '../utils/playGame';
 
   export const gameEvents =  (io) => {
     io.on(CONNECTION, (socket) => {
@@ -161,9 +163,25 @@ import {
             io.to(room).emit(GAME_STARTED);
           })
 
-          socket.on(GET_PLAY_GAME_DATA, ({ room, id }) => {
-            const data = PlayGame.getUserData({ room, id });
-            io.to(id).emit(PLAY_GAME_DATA, data)
+          socket.on(GET_PLAY_GAME_DATA, ({ room, id, type, cardId }) => {
+            switch (type) {
+              case 'get' : const data = PlayGame.getUserData({ room, id }); io.to(id).emit(PLAY_GAME_DATA, data); break;
+              case 'card_click' : {
+                const result = PlayGame.cardClick({ room, id, cardId });
+                const data = PlayGame.getUserData({ room, id });
+                result ? io.to(id).emit(BLOCK_APP, { isBlock: true, message: endPlayMessage }) : io.to(id).emit(PLAY_GAME_DATA, data);
+                if (result) {
+                  const check = PlayGame.checkGame(room);
+                  if (check) {
+                    const results = PlayGame.getResults(room);
+                    io.to(room).emit(BLOCK_APP, { isBlock: false, message: '' });
+                    io.to(room).emit(RESULTS_DATA, results);
+                  }
+                }
+              }; break;
+              default : return;
+            }
+            
           })
 
         } catch (error) {

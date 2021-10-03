@@ -28,5 +28,6 @@ export const DISCONNECTING = 'disconnecting';
  export const GAME_STARTED = 'game_started';
  export const GET_PLAY_GAME_DATA = 'get_play_game_data';
  export const PLAY_GAME_DATA = 'play_game_data';
+ export const RESULTS_DATA = 'resuts_data';
 
 
