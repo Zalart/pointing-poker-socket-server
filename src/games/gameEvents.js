@@ -18,11 +18,16 @@ import {
     SET_GAME_DATA,
     START_GAME,
     GAME_STARTED,
-    DISCONNECTING
+    DISCONNECTING,
+    PLAY_GAME_DATA,
+    GET_PLAY_GAME_DATA,
+    RESULTS_DATA,
   } from '../utils/constants';
   import store from './games';
   import { votes, Vote } from '../utils/vote';
   import { messToKick, firstMessToKick, drawToKick } from '../utils/vote';
+  import { playGames, PlayGame } from '../utils/playGame';
+  import { endPlayMessage } from '../utils/playGame';
 
   export const gameEvents =  (io) => {
     io.on(CONNECTION, (socket) => {
@@ -71,7 +76,10 @@ import {
             const gameData = store.getGameData(gameId);
             io.to(gameToBroadcast).emit(GAME_DATA, gameData);
             socket.leave(gameId);
-            store.checkRoom(gameId);
+            if (playGames.has(gameId)) { PlayGame.deletePlayer({room: gameId, id: userId}) }
+            if (store.checkRoom(gameId)) {
+              if (playGames.has(gameId)) { playGames.delete(gameId) } 
+            };
           })
 
     
@@ -89,7 +97,10 @@ import {
             const room = socket.rooms.values().next().value;
             store.removeUser(room, socket.id);
             socket.leave(room);
-            store.checkRoom(room);
+            if (playGames.has(room)) { PlayGame.deletePlayer({room, id: socket.id}) }
+            if (store.checkRoom(room)) {
+              if (playGames.has(room)) { playGames.delete(room) } 
+            };
           })
 
           socket.on(KICK_PLAYER, (data) => {
@@ -118,6 +129,7 @@ import {
                   io.to(room).emit(GAME_DATA, gameData);
                   socket.id = userToKickId;
                   socket.leave(room);
+                  if (playGames.has(room)) { PlayGame.deletePlayer({room, id: userToKickId}) }
                   io.to(room).emit(BLOCK_APP, { isBlock: true, message: answer.message });
                   io.to(userToKickId).emit(BLOCK_APP, { isBlock: true, message: messToKick });
                   return 
@@ -146,7 +158,30 @@ import {
           })
 
           socket.on(START_GAME, ({ room }) => {
+            if (!playGames.has(room)) { PlayGame.createNewGame(room); }
+            else { return }
             io.to(room).emit(GAME_STARTED);
+          })
+
+          socket.on(GET_PLAY_GAME_DATA, ({ room, id, type, cardId }) => {
+            switch (type) {
+              case 'get' : const data = PlayGame.getUserData({ room, id }); io.to(id).emit(PLAY_GAME_DATA, data); break;
+              case 'card_click' : {
+                const result = PlayGame.cardClick({ room, id, cardId });
+                const data = PlayGame.getUserData({ room, id });
+                result ? io.to(id).emit(BLOCK_APP, { isBlock: true, message: endPlayMessage }) : io.to(id).emit(PLAY_GAME_DATA, data);
+                if (result) {
+                  const check = PlayGame.checkGame(room);
+                  if (check) {
+                    const results = PlayGame.getResults(room);
+                    io.to(room).emit(BLOCK_APP, { isBlock: false, message: '' });
+                    io.to(room).emit(RESULTS_DATA, results);
+                  }
+                }
+              }; break;
+              default : return;
+            }
+            
           })
 
         } catch (error) {

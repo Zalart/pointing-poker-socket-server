@@ -1,3 +1,4 @@
+
 class ManageGames {
     constructor() {
         this.games = {
@@ -86,7 +87,8 @@ class ManageGames {
     }
 
     checkRoom(room) {
-       if (!this.games[room].users.length) { delete this.games[room] }
+       if (!this.games[room].users.length) { delete this.games[room]; return true }
+       else { return false }
     }
 
 }
