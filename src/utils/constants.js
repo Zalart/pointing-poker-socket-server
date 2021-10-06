@@ -29,7 +29,6 @@ export const DISCONNECTING = 'disconnecting';
  export const GET_PLAY_GAME_DATA = 'get_play_game_data';
  export const PLAY_GAME_DATA = 'play_game_data';
  export const RESULTS_DATA = 'resuts_data';
- export const SAVE_GAME = 'save_game';
- export const RETURN_URL = 'return_url';
+
 
 
