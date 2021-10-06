@@ -188,7 +188,7 @@ import {
           })
 
           socket.on(SAVE_GAME, ({room, id}) => {
-            const filename = new Date(Date.now()).toLocaleString().replace(/[\. ,]/g, '') + room;
+            const filename = new Date(Date.now()).toLocaleString().replace(/[\. ,/_:]/g, '') + room;
             const textData = '';
             fs.writeFile(`./savedGames/${filename}.txt`, textData, (err) => {
               if (err) { console.log('Game was not saved.') }
