@@ -89,7 +89,6 @@ class Game {
       })
       returnResult.push(obj);
     }) 
-    playGames.delete(room);
     return returnResult;
   }
 
