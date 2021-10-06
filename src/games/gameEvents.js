@@ -22,13 +22,16 @@ import {
     PLAY_GAME_DATA,
     GET_PLAY_GAME_DATA,
     RESULTS_DATA,
+    SAVE_GAME,
+    RETURN_URL
   } from '../utils/constants';
   import store from './games';
   import { votes, Vote } from '../utils/vote';
   import { messToKick, firstMessToKick, drawToKick } from '../utils/vote';
   import { playGames, PlayGame } from '../utils/playGame';
   import { endPlayMessage } from '../utils/playGame';
-
+  import * as fs from 'fs';
+  
   export const gameEvents =  (io) => {
     io.on(CONNECTION, (socket) => {
         let userId = socket.id;
@@ -182,6 +185,15 @@ import {
               default : return;
             }
             
+          })
+
+          socket.on(SAVE_GAME, ({room, id}) => {
+            const filename = new Date(Date.now()).toLocaleString().replace(/[\. ,]/g, '') + room;
+            const textData = '';
+            fs.writeFile(`./savedGames/${filename}.txt`, textData, (err) => {
+              if (err) { console.log('Game was not saved.') }
+            })
+            io.to(id).emit(RETURN_URL, `https://pointing-poker-server.herokuapp.com/savedGames/${filename}.txt`)
           })
 
         } catch (error) {
