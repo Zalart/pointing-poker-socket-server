@@ -86,11 +86,13 @@ class ManageGames {
   }
 
   addChatMessage = ({ room, userId, message }) => {
-    this.games[room].chatMessages.unshift({ userId, message });
+    if (this.games[room]) { this.games[room].chatMessages.unshift({ userId, message }) }
+    else return;
   };
 
   getChatMessages = (room) => {
-    return this.games[room].chatMessages;
+    if (this.games[room]) { return this.games[room].chatMessages }
+    else { return [] }
   };
 }
 
