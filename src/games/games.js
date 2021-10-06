@@ -46,9 +46,15 @@ class ManageGames {
     this.games[gameId].users.push(userToAdd);
   };
 
-  getUsers = (gameId) => this.games[gameId].users;
+  getUsers = gameId => {
+    if (this.games[gameId]) {return this.games[gameId].users}
+    else {return []}
+  }
 
-  getGameData = (gameId) => this.games[gameId];
+  getGameData = gameId => {
+    if (this.games[gameId]) {return this.games[gameId]}
+    else {return {users: [], cards: [], issues: [], gameSettings: {}}}
+  }
 
   setGameData = ({ gameId, data }) => {
     const { cards, issues, gameSettings } = data;
