@@ -66,6 +66,7 @@ class ManageGames {
   getGames = () => Object.keys(this.games);
 
   removeUser = (gameId, id) => {
+    if (!this.games[gameId]) { return }
     const index = this.games[gameId].users.findIndex(
       (user) => user.userId === id
     );
