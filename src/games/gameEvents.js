@@ -25,6 +25,7 @@ import {
   SEND_CHAT_MESSAGE,
   CHAT_MESSAGES,
   GET_CHAT_MESSAGES,
+  CHECK_GAME_ID,
 } from "../utils/constants";
 import store from "./games";
 import { votes, Vote } from "../utils/vote";
@@ -76,6 +77,15 @@ export const gameEvents = (io) => {
           }
         }
       );
+      
+      socket.on(CHECK_GAME_ID, (gameId) => {
+        const gameData = store.getGameData(gameId);
+        if (gameData) {
+          io.emit(GAME_ID_EXISTS, gameId);
+        } else {
+          io.emit(GAME_ID_EXISTS, false);
+        }
+      });
 
       socket.on(GET_GAME_DATA, (gameId) => {
         const gameData = store.getGameData(gameId);
