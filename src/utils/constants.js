@@ -33,6 +33,6 @@ export const RESULTS_DATA = "resuts_data";
 export const SEND_CHAT_MESSAGE = "send_chat_message";
 export const CHAT_MESSAGES = "chat_messages";
 export const GET_CHAT_MESSAGES = "get_chat_messages";
-// ======= lobby guard
+// ======= lobby
 export const GAME_ID_EXISTS = "game_id_exists";
 export const CHECK_GAME_ID = "check_game_id";
