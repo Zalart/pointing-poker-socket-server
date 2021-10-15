@@ -81,7 +81,7 @@ export const gameEvents = (io) => {
 
       socket.on(CHECK_GAME_ID, (gameId) => {
         const gameData = store.getGameData(gameId);
-        if (gameData) {
+        if (gameData.users.length) {
           io.emit(GAME_ID_EXISTS, gameId);
         } else {
           io.emit(GAME_ID_EXISTS, false);
